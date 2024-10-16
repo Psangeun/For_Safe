@@ -16,17 +16,21 @@ HRESULT CEffectBloodSplater::Ready_GameObject()
     FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
     m_pTransformCom->Set_Pos(0.f, 1.f, 3.f);
-    m_pEffectCom->Set_LifeTime(0.5f);
+    m_pTransformCom->Set_Scale(0.4f, 0.4f, 1.f);
+    m_pEffectCom->Set_LifeTime(0.4f);
     m_pEffectCom->Set_Billboard(TRUE);
     m_iTotalFrame = 8;
 
+
+    m_pEffectCom->Set_CallBack(OnOperate);
+    m_pEffectCom->Set_CallBackParam(this);
     return S_OK;
 }
 
 _int CEffectBloodSplater::Update_GameObject(const _float& _fTimeDelta)
 {
     Engine::Add_RenderGroup(RENDERID::RENDER_ALPHA, this);
-  
+
     return Engine::CGameObject::Update_GameObject(_fTimeDelta);
 }
 
@@ -101,4 +105,11 @@ void CEffectBloodSplater::Animate_UV()
     m_iCurFrame = m_iTotalFrame * fPersentage;
 
     m_pBufferCom->Set_UV(_vec2(4.f, 2.f), m_iCurFrame);
+}
+
+void CEffectBloodSplater::OnOperate(void* _pParam)
+{
+    CEffectBloodSplater* pThis = (CEffectBloodSplater*)_pParam;
+
+    pThis->m_pTransformCom->Set_Scale(0.4f, 0.4f, 1.f);
 }

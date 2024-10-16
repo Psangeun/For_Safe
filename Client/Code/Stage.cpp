@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "..\Header\Stage.h"
+#include "../Header/GameStage2.h"
 #include "Export_Utility.h"
 #include "Export_System.h"
 #include "..\Header\DynamicCamera.h"
@@ -15,6 +16,15 @@
 #include "../Header/UIMisterBullet.h"
 #include "../Header/UIRoboto.h"
 #include "../Header/UIFreeCam.h"
+#include "../Header/UIScreen.h"
+#include "../Header/UIPhone.h"
+#include "../Header/UIPlayer.h"
+#include "../Header/UIAction.h"
+#include "../Header/UIDown.h"
+#include "../Header/UICombo.h"
+#include "../Header/UIFloor.h"
+#include "../Header/UIVictory.h"
+#include "../Header/UISkill.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 _pGraphicDev)
 	: Engine::CScene(_pGraphicDev)
@@ -50,7 +60,7 @@ HRESULT CStage::Ready_Scene()
 	FAILED_CHECK_RETURN(Ready_Layer_MonsterBullet(L"Layer_MonsterBullet"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_UI(L"Layer_UI"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Layer_Effect(L"Layer_Effect"), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_Layer_Item(L"Layer_Item"), E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Layer_Item(L"Layer_Item"), E_FAIL); //맵 로드 문제로 Ready_Layer_GameLogic함수에서 아이템 레이어 생성해주고 있습니다.
 
 	//MapLoad(Find_Layer(L"Layer_GameLogic"));
 	//ChangeMapLoad();
@@ -58,6 +68,8 @@ HRESULT CStage::Ready_Scene()
 
 
 	Engine::Calculate_Trigger();//10.06
+
+	Engine::Play_Sound(L"ReadyGo.wav", CHANNELID::SOUND_EFFECT, 1.f);
 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 
@@ -69,6 +81,10 @@ _int CStage::Update_Scene(const _float& _fTimeDelta)
 	// 콜라이더 OnOff
 	if (Engine::Key_Press(DIK_F1))
 		Engine::Toggle_Collider();
+
+	
+
+	
 
 	// 자유ㅠ시점 OnOff
 	if (Engine::Key_Press(DIK_F2))
@@ -130,13 +146,20 @@ _int CStage::Update_Scene(const _float& _fTimeDelta)
 			m_pPlayer->Set_PlayerHP(m_pPlayer->Get_PlayerHP() + 1.f);
 	}
 
-	// Roboto 보스 체력 UI OnOff
-	if (Engine::Key_Press(DIK_F7))
+	//if (Engine::Key_Press(DIK_F8))
+	//{
+	//	if (Engine::Get_ListUI(UITYPE::UI_SCREEN)->empty())
+	//	{
+	//		Engine::Activate_UI(UITYPE::UI_SCREEN);
+	//		static_cast<CUIScreen*>(Engine::Get_ListUI(UITYPE::UI_SCREEN)->front())->Set_FloorTime(Engine::Get_Elapsed()); //줄어들기전
+	//	}
+	//	else static_cast<CUIScreen*>(Engine::Get_ListUI(UITYPE::UI_SCREEN)->front())->Set_Return(true); //줄어들어있으니까 줄어들어라
+	//}
+
+	if (Engine::Key_Press(DIK_F9))
 	{
-		if (Engine::Get_ListUI(UITYPE::UI_ROBOTO)->empty())
-			Engine::Activate_UI(UITYPE::UI_ROBOTO);
-		else
-			Engine::Deactivate_UI(UITYPE::UI_ROBOTO);
+		if (Engine::Get_ListUI(UITYPE::UI_ACTION)->empty())
+			Engine::Activate_UI(UITYPE::UI_ACTION);
 	}
 
 	// 인벤토리 OnOff
@@ -154,7 +177,47 @@ _int CStage::Update_Scene(const _float& _fTimeDelta)
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+		
+		
+		
+	
+	
+
 	_int iExit = Engine::CScene::Update_Scene(_fTimeDelta);
+
+	if (Engine::Key_Press(DIK_RETURN))
+	{
+		Engine::CScene* pStage = CGameStage2::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pStage, -1);
+
+		FAILED_CHECK_RETURN(Engine::Set_Scene(pStage), E_FAIL);
+
+		return 0;
+	}
+
+	
+	if (m_pPlayer->Get_Clear())
+	{
+		if (Engine::Get_ListUI(UITYPE::UI_SHOP)->empty() == false)
+		{
+			Engine::CScene* pStage = CGameStage2::Create(m_pGraphicDev);
+			NULL_CHECK_RETURN(pStage, -1);
+
+			FAILED_CHECK_RETURN(Engine::Set_Scene(pStage), E_FAIL);
+
+			return 0;
+
+		}
+		return 0;
+	}
+	
+
 	Engine::Update_Bullet(_fTimeDelta); //Jonghan Change
 
 	return iExit;
@@ -164,6 +227,8 @@ void CStage::LateUpdate_Scene()
 {
 	Engine::CScene::LateUpdate_Scene();
 	Engine::LateUpdate_Bullet(); //Jonghan Change // Is it Right? becuz BulletManager
+
+	
 }
 
 void CStage::Render_Scene()
@@ -208,7 +273,7 @@ HRESULT CStage::Ready_Layer_Environment(const _tchar* _pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
 
-	pGameObject = CSkyBox::Create(m_pGraphicDev);
+	pGameObject = CSkyBox::Create(m_pGraphicDev,7);//5=도시배경,7=까만배경
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"SkyBox", pGameObject), E_FAIL);
 
@@ -223,19 +288,31 @@ HRESULT CStage::Ready_Layer_GameLogic(const _tchar* _pLayerTag)
 {
 	Engine::CLayer* pLayer = CLayer::Create();
 	Engine::CLayer* pLayer2 = CLayer::Create();
+	Engine::CLayer* pLayer3 = CLayer::Create();
 	NULL_CHECK_RETURN(pLayer, E_FAIL);
 	NULL_CHECK_RETURN(pLayer2, E_FAIL);
+	NULL_CHECK_RETURN(pLayer3, E_FAIL);
 
 	Engine::CGameObject* pGameObject = nullptr;
 
-	MapLoad2(pLayer, pLayer2);
+	MapLoad2(pLayer, pLayer2, pLayer3);
 
 	pGameObject = CDrinkMachine::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DrinkMachine", pGameObject), E_FAIL);
 
+	for (_int i = 0; i < 32; i++)
+	{
+		Engine::CSoda* pSoda = nullptr;
+		pSoda = CDrink::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pSoda, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer3->Add_GameObject(L"Drink", pSoda), E_FAIL);
+		Engine::Set_DrinkObject(pSoda);
+	}
+
 	m_mapLayer.insert({ L"Layer_Wall" , pLayer});
 	m_mapLayer.insert({ L"Layer_Monster" , pLayer2});
+	m_mapLayer.insert({ L"Layer_Item" , pLayer3 });
 
 	return S_OK;
 }
@@ -247,10 +324,11 @@ HRESULT CStage::Ready_Layer_Player(const _tchar* _pLayerTag)
 
 	Engine::CGameObject* pGameObject = nullptr;
 
-	pGameObject = CPlayer::Create(m_pGraphicDev);
+	pGameObject = CPlayer::Create(m_pGraphicDev, _vec3{ 8.75f, 1.f, 1.f });
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 	m_pPlayer = static_cast<CPlayer*>(pGameObject);
+	m_pPlayer->Set_CurrFloor(1);
 
 	m_mapLayer.insert({ _pLayerTag , pLayer });
 
@@ -261,6 +339,9 @@ HRESULT CStage::Ready_Layer_MonsterBullet(const _tchar* _pLayerTag)
 {
 	Engine::CLayer* pLayer = CLayer::Create();
 	NULL_CHECK_RETURN(pLayer, E_FAIL);
+
+	Engine::CLayer* pLayer2 = CLayer::Create();
+	NULL_CHECK_RETURN(pLayer2, E_FAIL);
 
 	Engine::CGameObject* pGameObject = nullptr;
 
@@ -276,7 +357,7 @@ HRESULT CStage::Ready_Layer_MonsterBullet(const _tchar* _pLayerTag)
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Bullet", pAmmo), E_FAIL);
 	}
 
-	for (_int i = 0; i < 100; ++i)
+	for (_int i = 0; i < 30; ++i)
 	{
 		Engine::CBullet* pMissile = nullptr;
 		pMissile = CMissile::Create(m_pGraphicDev);
@@ -286,8 +367,26 @@ HRESULT CStage::Ready_Layer_MonsterBullet(const _tchar* _pLayerTag)
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Missile", pMissile), E_FAIL);
 	}
 	//Jonghan Change End
+	for (_int i = 0; i < 10; ++i)
+	{
+		Engine::CBullet* pLaser = nullptr;
+		pLaser = CLaser::Create(m_pGraphicDev);
 
+		NULL_CHECK_RETURN(pLaser, E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Add_Laser(pLaser), E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Laser", pLaser), E_FAIL);
+	}
+	for (_int i = 0; i < 128; ++i)
+	{
+		Engine::CBullet* pMiniGun = nullptr;
+		pMiniGun = CMiniGun::Create(m_pGraphicDev);
+
+		NULL_CHECK_RETURN(pMiniGun, E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Add_MiniGun(pMiniGun), E_FAIL);
+		FAILED_CHECK_RETURN(pLayer2->Add_GameObject(L"MiniGun", pMiniGun), E_FAIL);
+	}
 	m_mapLayer.insert({ _pLayerTag , pLayer });
+	m_mapLayer.insert({ L"Layer_PlayerBullet" , pLayer2 });
 
 	return S_OK;
 }
@@ -302,39 +401,70 @@ HRESULT CStage::Ready_Layer_UI(const _tchar* _pLayerTag)
 		pUI = CUIPlus::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, E_FAIL);
 		FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
-		pUI->Set_GameObject(m_pPlayer);
 	}
 
 	pUI = CUINormal::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
-	pUI->Set_GameObject(m_pPlayer);
 
 	pUI = CUIInventory::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
-	pUI->Set_GameObject(m_pPlayer);
 
 	pUI = CUIShop::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
-	pUI->Set_GameObject(m_pPlayer);
 
 	pUI = CUIMisterBullet::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pUI, E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
-	pUI->Set_GameObject(m_pPlayer);
-
-	pUI = CUIRoboto::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
 
 	pUI = CUIFreeCam::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
-	pUI->Set_GameObject(m_pPlayer);
+
+	pUI = CUIScreen::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUIPhone::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUIPlayer::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUIAction::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUICombo::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUIVictory::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUIFloor::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	pUI = CUISkill::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+
+	for (_int i = 0; i < 20; i++)
+	{
+		pUI = CUIDown::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pUI, E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Add_UI(pUI), E_FAIL);
+	}
 
 	Engine::Activate_UI(UITYPE::UI_NORMAL);
+	Engine::Activate_UI(UITYPE::UI_PHONE);
+	Engine::Activate_UI(UITYPE::UI_PLAYER);
 
 	return S_OK;
 }
@@ -393,9 +523,9 @@ HRESULT CStage::Ready_Layer_Effect(const _tchar* _pLayerTag)
 	//m_mapLayer.insert({ _pLayerTag , pLayer });
 
 
-	//pGameObject = CFilterFundo::Create(m_pGraphicDev);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"FilterFundo", pGameObject), E_FAIL);
+	pGameObject = CFilterFundo::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"FilterFundo", pGameObject), E_FAIL);
 
 	pGameObject = CEffectPool::Create(m_pGraphicDev, (CGameObject * (*)(LPDIRECT3DDEVICE9))CEffectMinigunShell::Create);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
@@ -421,39 +551,33 @@ HRESULT CStage::Ready_Layer_Effect(const _tchar* _pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectPool_Explosion", pGameObject), E_FAIL);
 
-
-	m_mapLayer.insert({ _pLayerTag , pLayer });
-
-	return S_OK;
-}
-
-HRESULT CStage::Ready_Layer_Item(const _tchar* _pLayerTag)
-{
-	Engine::CLayer* pLayer = CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
-
-	Engine::CGameObject* pGameObject = nullptr;
-
-	pGameObject = CKnife::Create(m_pGraphicDev);
+	pGameObject = CEffectKick::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Knife", pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectKick", pGameObject), E_FAIL);
 
-	pGameObject = CAxe::Create(m_pGraphicDev);
+	pGameObject = CEffectKatanaAttack::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Axe", pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectKatanaAttack", pGameObject), E_FAIL);
 
+	pGameObject = CEffectPool::Create(m_pGraphicDev, (CGameObject * (*)(LPDIRECT3DDEVICE9))CEffectBloodJet::Create);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectPool_BloodJet", pGameObject), E_FAIL);
 
-	for (_int i = 0; i < 32; i++)
-	{
-		Engine::CSoda* pSoda = nullptr;
-		pSoda = CDrink::Create(m_pGraphicDev);
-		NULL_CHECK_RETURN(pSoda, E_FAIL);
-		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Drink", pSoda), E_FAIL);
-		Engine::Set_DrinkObject(pSoda);
-	}
-	
+	pGameObject = CEffectSniperMuzzleFlash::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectSniperMuzzleFlash", pGameObject), E_FAIL);
 
-	
+	pGameObject = CEffectShockWave::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectShockWave", pGameObject), E_FAIL);
+
+	pGameObject = CEffectBigExplosion::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"EffectBigExplosion", pGameObject), E_FAIL);
+
+	pGameObject = CFilterDying::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"FilterDying", pGameObject), E_FAIL);
 
 	m_mapLayer.insert({ _pLayerTag , pLayer });
 
@@ -467,6 +591,9 @@ void CStage::Set_Collision()
 	Engine::CheckGroup(L"Layer_Player", L"Layer_Monster");
 	Engine::CheckGroup(L"Layer_Player", L"Layer_Door");
 
+
+	Engine::CheckGroup(L"Layer_PlayerBullet", L"Layer_Monster");
+	//Engine::CheckGroup(L"Layer_PlayerBullet", L"Layer_Wall"); //For Particle when collide with Wall & MiniGunBullet // 레이 캐스팅으로 처리함
 	Engine::CheckGroup(L"Layer_Player", L"Layer_Wall");
 	Engine::CheckGroup(L"Layer_Monster", L"Layer_Wall");
 }
@@ -482,9 +609,9 @@ CLayer* CStage::Find_Layer(const _tchar* _pLayerTag)
 }
 
 
-void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2)
+void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2, CLayer* _pLayer3)
 {
-	HANDLE		hFile = CreateFile(L"../Data/GameStage0.txt",	// 파일 이름까지 포함된 경로
+	HANDLE		hFile = CreateFile(L"../Data/1_TutorialStage.txt",	// 파일 이름까지 포함된 경로
 		GENERIC_READ,		// 파일 접근 모드(GENERIC_WRITE : 쓰기, GENERIC_READ : 읽기)
 		NULL,				// 공유 방식(파일이 열려 있는 상태에서 다른 프로세스가 오픈 할 때 허가 할 것인가)
 		NULL,				// 보안 속성
@@ -503,11 +630,13 @@ void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2)
 	Engine::CLayer* pLayerDoor = CLayer::Create();
 
 	DWORD	dwByte(0);
-	_int iNumber_Type(0); // 이게 바닥인지(0) 벽인지(1) 벽TB인지(2) 몬스터인지(3) 
+	_int iNumber_Type(0); // 이게 바닥인지(0) 벽인지(1) 벽TB인지(2) 몬스터인지(3) 문(4) 아이템(5)
 	_int iNumber(0); //이게 그럼 몇번째 녀석인지
 	_int iTrigger(0); //이게 그럼 몇번째 trigger인지//10.06
 	_vec3 pPos{};
 	_vec3 pRot{};
+	_vec3 pRotation{};
+	_vec3 pScale{};
 
 	while (true)
 	{
@@ -526,13 +655,10 @@ void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2)
 
 		if (iNumber_Type == 0)
 		{
-			pRot = { 0.f, 0.f, 0.f };
+			ReadFile(hFile, &pScale, sizeof(_vec3), &dwByte, nullptr); // 크기
 
-			pGameObject = CFloor::Create_InfoNumberTrigger2(m_pGraphicDev, pPos, pRot, iNumber, iTrigger);//10.06
-
-
+			pGameObject = CFloor::Create_Info(m_pGraphicDev, pPos, pRot, pScale, iNumber, iTrigger);//10.06
 			NULL_CHECK_RETURN(pGameObject, );
-
 			pLayerFloor->Add_GameObject(L"Floor", pGameObject);
 			Engine::Set_Trigger(iTrigger, pGameObject);//10.06
 		}
@@ -612,7 +738,11 @@ void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2)
 			}
 			else if (iNumber == 8)
 			{
-				pGameObject = CBoss_Robot::Create(m_pGraphicDev, pPos);
+				Engine::CGameObject* pShield = nullptr;
+				pShield = CBoss_Shield::Create(m_pGraphicDev);
+				NULL_CHECK_RETURN(pShield, );
+				_pLayer2->Add_GameObject(L"Boss_Shield", pShield);
+				pGameObject = CBoss_Robot::Create(m_pGraphicDev, pShield, pPos);
 				NULL_CHECK_RETURN(pGameObject, );
 				_pLayer2->Add_GameObject(L"Boss_Robot", pGameObject);
 				Engine::Set_Trigger(iTrigger, pGameObject);//10.06
@@ -620,11 +750,37 @@ void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2)
 		}
 		if (iNumber_Type == 4)
 		{
+			ReadFile(hFile, &pRotation, sizeof(_vec3), &dwByte, nullptr); // 회전
+			ReadFile(hFile, &pScale, sizeof(_vec3), &dwByte, nullptr); // 크기
 
-			pGameObject = CDoor::Create_InfoNumberDirectionTrigger2(m_pGraphicDev, pPos, pRot, iNumber, iTrigger);//10.06
+			pGameObject = CDoor::Create_Infoload(m_pGraphicDev, pPos, pRotation, pScale, iNumber, pRot, iTrigger);//10.06
 			NULL_CHECK_RETURN(pGameObject, );
 			pLayerDoor->Add_GameObject(L"Door", pGameObject);
 			Engine::Set_Trigger(iTrigger, pGameObject);//10.06
+		}
+		if (iNumber_Type == 5)
+		{
+			if (iNumber == 1)
+			{
+				pGameObject = CDrinkMachine::Create(m_pGraphicDev, pPos);
+				NULL_CHECK_RETURN(pGameObject, );
+				_pLayer->Add_GameObject(L"DrinkMachine", pGameObject);
+				Engine::Set_Trigger(iTrigger, pGameObject);//10.07
+			}
+			else if (iNumber == 2)
+			{
+				pGameObject = CAxe::Create(m_pGraphicDev, pPos);
+				NULL_CHECK_RETURN(pGameObject, );
+				_pLayer3->Add_GameObject(L"Axe", pGameObject);
+				Engine::Set_Trigger(iTrigger, pGameObject);//10.07
+			}
+			else if (iNumber == 3)
+			{
+				pGameObject = CKnife::Create(m_pGraphicDev, pPos);
+				NULL_CHECK_RETURN(pGameObject, );
+				_pLayer3->Add_GameObject(L"Knife", pGameObject);
+				Engine::Set_Trigger(iTrigger, pGameObject);//10.07
+			}
 		}
 
 	}
@@ -633,13 +789,19 @@ void CStage::MapLoad2(CLayer* _pLayer, CLayer* _pLayer2)
 	m_mapLayer.insert({ L"Layer_Floor", pLayerFloor });
 	m_mapLayer.insert({ L"Layer_Door", pLayerDoor });
 
-	MessageBox(g_hWnd, L"LoadTest 완료", _T("성공"), MB_OK);
+	//MessageBox(g_hWnd, L"LoadTest 완료", _T("성공"), MB_OK);
 }
 
 
 void CStage::Free()
 {
 	Engine::CScene::Free();
+	//CUIManager::DestroyInstance();
+	//CCollisionManager::DestroyInstance();
+	//CBulletManager::DestroyInstance();
+	//CTrigger::DestroyInstance();
+	//CDrinkSpawner::DestroyInstance();
+	//CParticleSystem::Free()
 }
 
 

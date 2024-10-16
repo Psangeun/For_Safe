@@ -168,15 +168,17 @@ void CCollisionManager::Reset()
 	Clear_Collider();
 }
 
-vector<CGameObject*> CCollisionManager::RayCast(_vec3 vRayStart, _vec3 vRayDir)
+_bool CCollisionManager::RayCast(_vec3 vRayStart, _vec3 vRayDir)
 {
-	auto Objects = CManagement::GetInstance()->Get_CurrScene()->Get_LayerObjects(L"Layer_GameLogic");
+	auto Objects = CManagement::GetInstance()->Get_CurrScene()->Get_LayerObjects(L"Layer_Player");
 	vector<CGameObject*> pHitObject;
 
 	for (auto pair : *Objects) {
 		CGameObject* pTargetObject = pair.second;
-		CComponent* pTargetComponent = pTargetObject->Get_Component(COMPONENTID::ID_DYNAMIC, L"Com_Collider");
-		CCollider* pTargetCollider = dynamic_cast<CCollider*>(pTargetComponent);
+		CCharacter* pCharacter = dynamic_cast<CCharacter*>(pTargetObject);
+		//CComponent* pTargetComponent = pTargetObject->Get_Component(COMPONENTID::ID_DYNAMIC, L"Com_Body_Transform");
+		//dynamic_cast<CCollider*>(pTargetComponent);
+		CCollider* pTargetCollider = static_cast<CCollider*>(pTargetObject->Get_Component(COMPONENTID::ID_DYNAMIC, L"Com_Collider"));
 		if (pTargetCollider == nullptr)
 			continue;
 
@@ -184,18 +186,6 @@ vector<CGameObject*> CCollisionManager::RayCast(_vec3 vRayStart, _vec3 vRayDir)
 		_vec3 vCenter = pTargetCollider->GetFinalPos();
 		_vec3 vLength = vRayStart - vCenter;
 
-
-
-		// 구 와 직선의 충돌은 결과값이 0 보다 크거나같아야 충돌한거로 판정.
-		// 레이의 방정식을 사용하여 구와의 충돌 여부를 확인
-		// P(t) = P0 + t(내적점)vRayDir
-		// 
-		// 구와의 거리를 제곱으로 계산하여 최소값을 찾습니다
-		// 거리 제곱 공식은 다음과 같습니다
-		// (P0 + t(내적점)vRayDir−C)(내적점)(P0 + t(내적점)vRayDir−C) = r2
-		// 
-		//기하학적 변환 : 위 공식을 정리하여 t에 대한 이차 방정식 형태로 변환합니다
-		//At^2 + Bt + C = 0
 		_float A = D3DXVec3Dot(&vRayDir, &vRayDir);
 		_float B = 2.0f * D3DXVec3Dot(&vLength, &vRayDir);
 		_float C = D3DXVec3Dot(&vLength, &vLength) - (fRadius * fRadius);
@@ -206,10 +196,11 @@ vector<CGameObject*> CCollisionManager::RayCast(_vec3 vRayStart, _vec3 vRayDir)
 
 		if (fDiscriminant >= 0)
 		{
-			pHitObject.push_back(pTargetObject);
+			pCharacter->Damaged();
+			return true;
 		}
 	}
-	return pHitObject;
+	return false;
 }
 
 _bool CCollisionManager::RayCast2(_vec3 vRayStart, _vec3 vRayDir)
@@ -245,7 +236,11 @@ _bool CCollisionManager::RayCast2(_vec3 vRayStart, _vec3 vRayDir)
 			//헤드피격
 			pTargetComponent = pTargetObject->Get_Component(COMPONENTID::ID_STATIC, L"Com_HeadHit");
 			pTargetCol = dynamic_cast<CRcCol*>(pTargetComponent);
-
+			if (pTargetComponent == nullptr) {
+				//몸체피격만있을때
+				dynamic_cast<CCharacter*>(pTargetObject)->Damaged(DAMAGED_STATE::DAMAGED_BODYSHOT);
+				return true;
+			}
 			v0 = *pTargetCol->VertexPos(0);
 			v1 = *pTargetCol->VertexPos(1);
 			v2 = *pTargetCol->VertexPos(2);
@@ -290,7 +285,7 @@ _bool CCollisionManager::RayCast2(_vec3 vRayStart, _vec3 vRayDir)
 	return false;
 }
 
-_bool CCollisionManager::FireRayCast(_vec3 _vRayStart, _vec3 _vRayDir, _vec3& _vOut)
+_bool CCollisionManager::FireRayCast(_vec3 _vRayStart, _vec3 _vRayDir, _vec3& _vOut, const _float& _fDamage)
 {
 	auto Objects = CManagement::GetInstance()->Get_CurrScene()->Get_LayerObjects(L"Layer_Monster");
 	for (auto pair : *Objects) {
@@ -322,8 +317,12 @@ _bool CCollisionManager::FireRayCast(_vec3 _vRayStart, _vec3 _vRayDir, _vec3& _v
 		if (intersected || intersected2) {
 			//헤드피격
 			pTargetComponent = pTargetObject->Get_Component(COMPONENTID::ID_STATIC, L"Com_HeadHit");
+			if (pTargetComponent == nullptr)
+			{
+				dynamic_cast<CCharacter*>(pTargetObject)->Damaged(DAMAGED_STATE::DAMAGED_BODYSHOT, 1.f);
+				return true;
+			}
 			pTargetCol = dynamic_cast<CRcCol*>(pTargetComponent);
-
 			v0 = *pTargetCol->VertexPos(0);
 			v1 = *pTargetCol->VertexPos(1);
 			v2 = *pTargetCol->VertexPos(2);
@@ -339,10 +338,21 @@ _bool CCollisionManager::FireRayCast(_vec3 _vRayStart, _vec3 _vRayDir, _vec3& _v
 			if (intersected || intersected2) {
 				dynamic_cast<CCharacter*>(pTargetObject)->Damaged(DAMAGED_STATE::DAMAGED_HEADSHOT);
 				// V1 + U(V2 - V1) + V(V3 - V1)
-				if (intersected)
-					_vOut = v0 + (u * (v1 - v0)) + (v * (v2 - v0));
-				else
-					_vOut = v0 + (u * (v2 - v1)) + (v * (v3 - v0));
+				//if (intersected)
+				//{
+				//	//_vOut = v0 + (u * (v1 - v0)) + (v * (v2 - v0));
+				//	_int iTemp = rand() % 100;
+				//	_vOut = _vRayStart + (dist * _vRayDir *(1 - (iTemp * 0.0001f)));
+				//}
+				//else
+				//{
+				//	//_vOut = v0 + (u * (v2 - v1)) + (v * (v3 - v0));
+				//	_int iTemp = rand() % 100;
+				//	_vOut = _vRayStart + (dist * _vRayDir * (1 - (iTemp * 0.0001f)));
+				//}
+
+				_int iTemp = rand() % 100;
+				_vOut = _vRayStart + (dist * _vRayDir * (1 - (iTemp * 0.001f)));
 
 				return true;
 			}
@@ -365,20 +375,40 @@ _bool CCollisionManager::FireRayCast(_vec3 _vRayStart, _vec3 _vRayDir, _vec3& _v
 			if (intersected || intersected2) {
 				dynamic_cast<CCharacter*>(pTargetObject)->Damaged(DAMAGED_STATE::DAMAGED_BULLSHOT);
 				// V1 + U(V2 - V1) + V(V3 - V1)
-				if (intersected)
-					_vOut = v0 + (u * (v1 - v0)) + (v * (v2 - v0));
-				else
-					_vOut = v0 + (u * (v2 - v1)) + (v * (v3 - v0));
+				//if (intersected)
+				//{
+				//	//_vOut = v0 + (u * (v1 - v0)) + (v * (v2 - v0));
+				//	_int iTemp = rand() % 100;
+				//	_vOut = _vRayStart + (dist * _vRayDir * (1 - (iTemp * 0.0001f)));
+				//}
+				//else
+				//{
+				//	//_vOut = v0 + (u * (v2 - v1)) + (v * (v3 - v0));
+				//	_int iTemp = rand() % 100;
+				//	_vOut = _vRayStart + (dist * _vRayDir * (1 - (iTemp * 0.0001f)));
+				//}
 
+				_int iTemp = rand() % 100;
+				_vOut = _vRayStart + (dist * _vRayDir * (1 - (iTemp * 0.001f)));
 				return true;
 			}
 			//몸체피격
-			dynamic_cast<CCharacter*>(pTargetObject)->Damaged(DAMAGED_STATE::DAMAGED_BODYSHOT);
+			dynamic_cast<CCharacter*>(pTargetObject)->Damaged(DAMAGED_STATE::DAMAGED_BODYSHOT, _fDamage);
 			// V1 + U(V2 - V1) + V(V3 - V1)
-			if (intersected)
-				_vOut = v0 + (u * (v1 - v0)) + (v * (v2 - v0));
-			else
-				_vOut = v0 + (u * (v2 - v1)) + (v * (v3 - v0));
+			//if (intersected)
+			//{
+			//	//_vOut = v0 + (u * (v1 - v0)) + (v * (v2 - v0));
+			//	_vOut = _vRayStart + (dist * _vRayDir);
+			//}
+			//else
+			//{
+			//	//_vOut = v0 + (u * (v2 - v1)) + (v * (v3 - v0));
+			//	_vOut = _vRayStart + (dist * _vRayDir);
+			//}
+
+			_int iTemp = rand() % 100;
+			_vOut = _vRayStart + (dist * _vRayDir * (1 - (iTemp * 0.001f)));
+
 			return true;
 		}
 	}
@@ -424,6 +454,191 @@ _float CCollisionManager::FloorRayCast(_vec3 vRayStart)
 
 	return 0.f;
 }
+
+CGameObject* CCollisionManager::FloorRayCast2(_vec3 vRayStart)
+{
+	auto mapFloor = CManagement::GetInstance()->Get_CurrScene()->Get_LayerObjects(L"Layer_Floor");
+	CGameObject* pGameObject;
+
+	for (auto Object : *mapFloor)
+	{
+		pGameObject = Object.second;
+		CComponent* pComponent = pGameObject->Get_Component(COMPONENTID::ID_STATIC, L"Com_Buffer");
+		CFloorTex* pFloorTex = static_cast<CFloorTex*>(pComponent);
+
+		pComponent = pGameObject->Get_Component(COMPONENTID::ID_DYNAMIC, L"Com_Transform");
+		CTransform* pFloorTransform = static_cast<CTransform*>(pComponent);
+		const _matrix* pFloorWorld = pFloorTransform->Get_WorldMatrix();
+
+		_vec3 vVertex0 = *pFloorTex->Get_VertexPos(0);
+		_vec3 vVertex1 = *pFloorTex->Get_VertexPos(1);
+		_vec3 vVertex2 = *pFloorTex->Get_VertexPos(2);
+		_vec3 vVertex3 = *pFloorTex->Get_VertexPos(3);
+
+		D3DXVec3TransformCoord(&vVertex0, &vVertex0, pFloorWorld);
+		D3DXVec3TransformCoord(&vVertex1, &vVertex1, pFloorWorld);
+		D3DXVec3TransformCoord(&vVertex2, &vVertex2, pFloorWorld);
+		D3DXVec3TransformCoord(&vVertex3, &vVertex3, pFloorWorld);
+
+		float fU, fV, fDist1(0.f), fDist2(0.f);
+		_vec3 vRayDir = { 0.f, -1.f, 0.f };
+		_bool bIntersected1 = D3DXIntersectTri(&vVertex0, &vVertex1, &vVertex2, &vRayStart, &vRayDir, &fU, &fV, &fDist1);
+		_bool bIntersected2 = D3DXIntersectTri(&vVertex0, &vVertex2, &vVertex3, &vRayStart, &vRayDir, &fU, &fV, &fDist2);
+
+		if (bIntersected1)
+			return pGameObject;
+		else if (bIntersected2)
+			return pGameObject;
+		else
+			continue;
+	}
+}
+
+CGameObject* CCollisionManager::RayCastWall(_vec3 vRayStart, _vec3 vRayDir, _vec3* _vPos)
+{
+	// wall 
+	CGameObject* pReturn(nullptr);
+	auto Objects = CManagement::GetInstance()->Get_CurrScene()->Get_LayerObjects(L"Layer_Wall");
+	vector<CGameObject*> pHitObject;
+	_float fMinDist(1001.f);
+
+	for (auto pair : *Objects)
+	{
+		CGameObject* pTargetObject = pair.second; // wall game object
+		if (!pTargetObject->Get_IsRender())
+			continue;
+
+		CWallTex* pWallbuffer(nullptr);
+		CWallTBTex* pWallTBBuffer(nullptr);
+		CTransform* pTargetTransform = static_cast<CTransform*>(pTargetObject->Get_Component(COMPONENTID::ID_DYNAMIC, L"Com_Transform"));
+		const _matrix* pTargetWolrd = pTargetTransform->Get_WorldMatrix();
+
+		_vec3 vVertexPos[4];
+		pWallbuffer = dynamic_cast<CWallTex*>(pTargetObject->Get_Component(COMPONENTID::ID_STATIC, L"Com_Buffer"));
+		if (pWallbuffer)
+		{
+			//for (_uint i=0; i<4; ++i)
+			//	vVertexPos[i] = pWallbuffer->Get_VtxPos()[i];
+			vVertexPos[0] = { 0.f, 2.f, 0.f };
+			vVertexPos[1] = { 0.f, 2.f, 2.f };
+			vVertexPos[2] = { 0.f, 0.f, 2.f };
+			vVertexPos[3] = { 0.f, 0.f, 0.f };
+		}
+		else
+		{
+			pWallTBBuffer = static_cast<CWallTBTex*>(pTargetObject->Get_Component(COMPONENTID::ID_STATIC, L"Com_Buffer"));
+			//for (_uint i=0; i<4; ++i)
+			//	vVertexPos[i] = pWallTBBuffer->Get_VtxPos()[i];
+
+			vVertexPos[0] = { 0.f, 2.f, 0.f };
+			vVertexPos[1] = { 2.f, 2.f, 0.f };
+			vVertexPos[2] = { 2.f, 0.f, 0.f };
+			vVertexPos[3] = { 0.f, 0.f, 0.f };
+		}
+
+		for (_uint i = 0; i < 4; ++i)
+			D3DXVec3TransformCoord(&vVertexPos[i], &vVertexPos[i], pTargetWolrd);
+
+		float fU, fV, fDist(0.f);
+		_bool bIntersected(FALSE);
+		if (D3DXIntersectTri(&vVertexPos[0], &vVertexPos[1], &vVertexPos[2], &vRayStart, &vRayDir, &fU, &fV, &fDist))
+		{
+			if (fDist < fMinDist)
+			{
+				fMinDist = fDist;
+				pReturn = pTargetObject;
+
+				*_vPos = vVertexPos[0] + (fU * (vVertexPos[1] - vVertexPos[0])) + (fV * (vVertexPos[2] - vVertexPos[0]));
+			}
+		}
+
+		else if (D3DXIntersectTri(&vVertexPos[0], &vVertexPos[2], &vVertexPos[3], &vRayStart, &vRayDir, &fU, &fV, &fDist))
+		{
+			if (fDist < fMinDist)
+			{
+				fMinDist = fDist;
+				pReturn = pTargetObject;
+
+				*_vPos = vVertexPos[0] + (fU * (vVertexPos[2] - vVertexPos[1])) + (fV * (vVertexPos[3] - vVertexPos[0]));
+			}
+
+		}
+		else
+			continue;
+
+	}
+
+
+	if (fMinDist < 1000.f)
+	{
+		*_vPos = fMinDist * vRayDir + vRayStart;
+		return pReturn;
+	}
+
+
+	// floor ray casting
+	auto pFloor = CManagement::GetInstance()->Get_CurrScene()->Get_LayerObjects(L"Layer_Floor");
+
+	for (auto pObject : *pFloor)
+	{
+		CGameObject* pGameObject = pObject.second;
+		//if (!pGameObject->Get_IsRender())
+		//	continue;
+
+		CComponent* pComponent = pGameObject->Get_Component(COMPONENTID::ID_STATIC, L"Com_Buffer");
+		CFloorTex* pFloorTex = static_cast<CFloorTex*>(pComponent);
+
+		pComponent = pGameObject->Get_Component(COMPONENTID::ID_DYNAMIC, L"Com_Transform");
+		CTransform* pFloorTransform = static_cast<CTransform*>(pComponent);
+		const _matrix* pFloorWorld = pFloorTransform->Get_WorldMatrix();
+
+		//_vec3 vVertex0 = *pFloorTex->Get_VertexPos(0);
+		//_vec3 vVertex1 = *pFloorTex->Get_VertexPos(1);
+		//_vec3 vVertex2 = *pFloorTex->Get_VertexPos(2);
+		//_vec3 vVertex3 = *pFloorTex->Get_VertexPos(3);
+
+		_vec3 vVertex0 = { 0.f, 0.f, 1.f };
+		_vec3 vVertex1 = { 1.f, 0.f, 1.f };
+		_vec3 vVertex2 = { 1.f, 0.f, 0.f };
+		_vec3 vVertex3 = { 0.f, 0.f, 0.f };
+
+
+
+		D3DXVec3TransformCoord(&vVertex0, &vVertex0, pFloorWorld);
+		D3DXVec3TransformCoord(&vVertex1, &vVertex1, pFloorWorld);
+		D3DXVec3TransformCoord(&vVertex2, &vVertex2, pFloorWorld);
+		D3DXVec3TransformCoord(&vVertex3, &vVertex3, pFloorWorld);
+
+		float fU, fV, fDist(0.f);
+		if (D3DXIntersectTri(&vVertex0, &vVertex1, &vVertex2, &vRayStart, &vRayDir, &fU, &fV, &fDist))
+		{
+			if (fDist < fMinDist)
+			{
+				fMinDist = fDist;
+				pReturn = pGameObject;
+			}
+		}
+
+		else if (D3DXIntersectTri(&vVertex0, &vVertex2, &vVertex3, &vRayStart, &vRayDir, &fU, &fV, &fDist))
+		{
+			if (fDist < fMinDist)
+			{
+				fMinDist = fDist;
+				pReturn = pGameObject;
+			}
+		}
+
+	}
+
+	if (fMinDist < 1000.f)
+	{
+		*_vPos = fMinDist * vRayDir + vRayStart;
+		return pReturn;
+	}
+
+	return nullptr;
+}
+
 
 void CCollisionManager::Free()
 {

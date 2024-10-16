@@ -10,9 +10,7 @@ CItem::CItem(LPDIRECT3DDEVICE9 _pGraphicDev)
     , m_pTextureCom(nullptr)
     , m_pColliderCom(nullptr)
     , m_pTransformCom(nullptr)
-    
 {
-    m_bIsRender = false;
 }
 
 CItem::~CItem()
@@ -44,7 +42,28 @@ _int CItem::Update_GameObject(const _float& _fTimeDelta)
 
     m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 
-    
+    //D3DXMatrixIdentity(&matBill);
+
+    //matBill._11 = matView._11;
+    //matBill._13 = matView._13;
+    //matBill._31 = matView._31;
+    //matBill._33 = matView._33;
+
+    //matBill._11 = matView._11;
+    //matBill._12 = matView._12;
+    //matBill._21 = matView._21;
+    //matBill._22 = matView._22;
+
+    //matBill._22 = matView._22;
+    //matBill._23 = matView._23;
+    //matBill._32 = matView._32;
+    //matBill._33 = matView._33;
+
+    //D3DXMatrixInverse(&matBill, 0, &matBill);
+    //
+    //matResult = matBill * matWorld;
+    //
+    //m_pTransformCom->Set_WorldMatrix(&(matResult));
 
     Add_RenderGroup(RENDERID::RENDER_ALPHA, this);
 
@@ -66,13 +85,13 @@ void CItem::Render_GameObject()
     {
         m_pGraphicDev->SetTransform(D3DTS_WORLD, m_pTransformCom->Get_WorldMatrix());
         m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-        m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+        //m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
         m_pTextureCom->Set_Texture(); //Jonghan Change
 
         m_pBufferCom->Render_Buffer();
 
-        m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+        //m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
         m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
     }
 }

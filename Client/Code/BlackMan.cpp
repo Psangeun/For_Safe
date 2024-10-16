@@ -3,11 +3,13 @@
 #include "Export_System.h"
 #include "Export_Utility.h"
 #include "../Header/Shield.h"
+#include "../Header/Player.h"
 
 CBlackMan::CBlackMan(LPDIRECT3DDEVICE9 _pGraphicDev) : 
     CHumanoid(_pGraphicDev)
 	, m_pShield(nullptr)
 	, m_bIsShield(true)
+	, m_bIsFormChange(false)
 {
 	m_fFireDelayTime = 5.f;
 	m_fAttackTimer = 6.f;
@@ -19,6 +21,7 @@ CBlackMan::CBlackMan(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 _vecPos)
 	: CHumanoid(_pGraphicDev)
 	, m_pShield(nullptr)
 	, m_bIsShield(true)
+	, m_bIsFormChange(false)
 {
 	m_fFireDelayTime = 5.f;
 	m_fAttackTimer = 6.f;
@@ -74,10 +77,13 @@ HRESULT CBlackMan::Ready_GameObject()
 	m_pColliderCom->SetShow(true);
 	m_pColliderCom->SetActive(true);
 
+	_int iTemp = rand() % 20;
+	m_fAttackTimer = (iTemp + 1) / 2.f;
+
 	Set_Animation();
-	m_pHitBufferCom->SetvOffSet({ 0.f,0.f,0.f });
-	m_pHeadHit->SetvOffSet({ 0.5f,0.5f,0.f });
-	m_pCriticalHit->SetvOffSet({ -0.5f,0.5f,0.f });
+	m_pHitBufferCom->Set_Hit_Parts(CRcCol::HIT_BODY);
+	m_pHeadHit->Set_Hit_Parts(CRcCol::HIT_HEAD);
+	m_pCriticalHit->Set_Hit_Parts(CRcCol::HIT_CRITICAL);
 	return S_OK;
 }
 
@@ -195,7 +201,7 @@ HRESULT CBlackMan::Add_Component()
 
 void CBlackMan::State_Check()
 {
-	if (m_eCurState != m_ePreState)
+	if (m_eCurState != m_ePreState || m_bIsFormChange)
 	{
 		switch (m_eCurState)
 		{
@@ -244,7 +250,7 @@ void CBlackMan::State_Check()
 			m_pAnimatorCom->PlayAnimation(L"Execution", false);
 			break;
 		}
-
+		m_bIsFormChange = false;
 		m_ePreState = m_eCurState;
 	}
 }
@@ -256,7 +262,7 @@ void CBlackMan::Attack(const _float& _fTimeDelta)
 		m_bIsExecution = false;
 		Changing_State(CHumanoid::HUMANOID_IDLE);
 		m_pTransformCom->Set_Scale({ 1.f, 1.f, 1.f });
-		AddForce(30.f, m_vPlayerLook, 15.f);
+		AddForce(16.5f, m_vPlayerLook, 15.f);
 		CComponent* pComponent = Engine::Get_Component(COMPONENTID::ID_DYNAMIC, L"Layer_Effect", L"EffectHeal", L"Com_Effect");
 		static_cast<CEffect*>(pComponent)->Set_Visibility(TRUE);
 
@@ -311,6 +317,7 @@ void CBlackMan::Attack(const _float& _fTimeDelta)
 				Changing_State(CHumanoid::HUMANOID_ATTACK);
 				D3DXVec3Normalize(&vDir, &vDir);
 				Engine::Fire_Bullet(m_pGraphicDev, vPos, vDir, 5, CBulletManager::BULLET_PISTOL);
+				Engine::Play_Sound(L"Pistol.wav", CHANNELID::SOUND_ENEMY_GUN, 0.8f);
 				m_bIsFire = true;
 			}
 		}
@@ -353,15 +360,24 @@ void CBlackMan::Damaged_By_Player(const DAMAGED_STATE& _eDamagedState, const _fl
 	if (m_bIsShield)
 	{
 		m_bIsShield = false;
-		_vec3 vPos;
+		_vec3 vPos, vPlayerPos, vDir;
 		m_pTransformCom->Get_Info(INFO::INFO_POS, &vPos);
+		m_pPlayerTransformCom->Get_Info(INFO::INFO_POS, &vPlayerPos);
+		vDir = vPlayerPos - vPos;
+		D3DXVec3Normalize(&vDir, &vDir);
+		vDir.y = 0.f;
+		vPos += vDir;
 		dynamic_cast<CShield*>(m_pShield)->Spawn_Shield(vPos);
+
+		m_bIsFormChange = true;
+
 		if (m_eCurState == CHumanoid::HUMANOID_IDLE)
 			m_pAnimatorCom->PlayAnimation(L"Idle", true);
 	}
 	else if (!m_bIsShield)
 	{
 		m_fHP -= _fAttackDamage;
+		Engine::Play_Sound(L"Blood_01.wav", CHANNELID::SOUND_ENEMY, 0.4f);
 		if (0.f >= m_fHP)
 		{
 			_vec3 vPos;
@@ -369,6 +385,7 @@ void CBlackMan::Damaged_By_Player(const DAMAGED_STATE& _eDamagedState, const _fl
 			_int iIndex = rand() % 13;
 
 			CUI* pUI = Engine::Activate_UI(UITYPE::UI_PLUS);
+			Dead_Combo();
 
 			switch (_eDamagedState)
 			{
@@ -376,14 +393,44 @@ void CBlackMan::Damaged_By_Player(const DAMAGED_STATE& _eDamagedState, const _fl
 				Changing_State(CHumanoid::HUMANOID_HEADSHOT);
 				static_cast<CUIPlus*>(pUI)->Init(vPos, CUIPlus::UI_PLUS::PLUS_HEADSHOT);
 				//static_cast<CUIPlus*>(pUI)->Init(vPos, (CUIPlus::UI_PLUS)iIndex);
+				if (0 == iIndex % 4)
+					Engine::Play_Sound(L"HeadShot_01.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (1 == iIndex % 4)
+					Engine::Play_Sound(L"HeadShot_02.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (2 == iIndex % 4)
+					Engine::Play_Sound(L"HeadShot_03.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else
+					Engine::Play_Sound(L"HeadShot_04.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+
+				dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->Set_PlayerHP_Plus(3.f);
 				break;
 			case Engine::DAMAGED_STATE::DAMAGED_BULLSHOT:
 				Changing_State(CHumanoid::HUMANOID_BULLSHOT);
 				static_cast<CUIPlus*>(pUI)->Init(vPos, CUIPlus::UI_PLUS::PLUS_NUTSHOT);
+				if (0 == iIndex % 4)
+					Engine::Play_Sound(L"Death_01.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (1 == iIndex % 4)
+					Engine::Play_Sound(L"Death_02.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (2 == iIndex % 4)
+					Engine::Play_Sound(L"Death_03.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else
+					Engine::Play_Sound(L"Death_04.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+
+				dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->Set_PlayerHP_Plus(3.f);
 				break;
 			case Engine::DAMAGED_STATE::DAMAGED_KATANA:
 				Changing_State(CHumanoid::HUMANOID_KATANA);
 				static_cast<CUIPlus*>(pUI)->Init(vPos, CUIPlus::UI_PLUS::PLUS_SAYONARA);
+				if (0 == iIndex % 4)
+					Engine::Play_Sound(L"Blood_01.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (1 == iIndex % 4)
+					Engine::Play_Sound(L"Blood_02.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (2 == iIndex % 4)
+					Engine::Play_Sound(L"Blood_03.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else
+					Engine::Play_Sound(L"Blood_04.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+
+				dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->Set_PlayerHP_Plus(3.f);
 				break;
 			case Engine::DAMAGED_STATE::DAMAGED_BODYSHOT:
 
@@ -398,7 +445,17 @@ void CBlackMan::Damaged_By_Player(const DAMAGED_STATE& _eDamagedState, const _fl
 				else
 					Changing_State(CHumanoid::HUMANOID_PUSH_TWO);
 
+				if (0 == iIndex % 4)
+					Engine::Play_Sound(L"Death_01.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (1 == iIndex % 4)
+					Engine::Play_Sound(L"Death_02.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else if (2 == iIndex % 4)
+					Engine::Play_Sound(L"Death_03.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+				else
+					Engine::Play_Sound(L"Death_04.wav", CHANNELID::SOUND_ENEMY_DAMAGED, 0.7f);
+
 				static_cast<CUIPlus*>(pUI)->Init(vPos, (CUIPlus::UI_PLUS)iIndex);
+				dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->Set_PlayerHP_Plus(2.f);
 				break;
 			case Engine::DAMAGED_STATE::DAMAGED_PUSHSHOT:
 
@@ -410,13 +467,14 @@ void CBlackMan::Damaged_By_Player(const DAMAGED_STATE& _eDamagedState, const _fl
 					Changing_State(CHumanoid::HUMANOID_PUSH_TWO);
 
 				static_cast<CUIPlus*>(pUI)->Init(vPos, (CUIPlus::UI_PLUS)iIndex);
-
+				dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->Set_PlayerHP_Plus(2.f);
 				break;
 			case Engine::DAMAGED_STATE::DAMAGED_EXECUTION:
 				static_cast<CUIPlus*>(pUI)->Init(vPos, CUIPlus::UI_PLUS::PLUS_GOODBYE);
+				dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->Set_PlayerHP_Plus(20.f);
 				break;
 			}
-			m_pColliderCom->SetActive(false);
+			//m_pColliderCom->SetActive(false);
 			m_bIsDead = true;
 		}
 	}

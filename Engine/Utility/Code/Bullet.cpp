@@ -4,6 +4,7 @@ CBullet::CBullet(LPDIRECT3DDEVICE9 _pGraphicDev)
 	: CGameObject(_pGraphicDev)
 	, m_vDir({0.f, 0.f, 0.f})
 	, m_fAttackDamage(0.f)
+	, m_fLinear(0.f)
 {
 	m_bIsRender = false;
 
@@ -13,7 +14,10 @@ CBullet::CBullet(LPDIRECT3DDEVICE9 _pGraphicDev, const _vec3& _vStartPos, const 
 	: CGameObject(_pGraphicDev)
 	, m_vDir(_vDir)
 	, m_fAttackDamage(_fAttackDamage)
+	, m_fLinear(0.f)
+
 {
+	m_bIsRender = false;
 }
 
 CBullet::~CBullet()
@@ -39,15 +43,6 @@ void CBullet::LateUpdate_GameObject()
 void CBullet::Render_GameObject()
 {
 
-}
-
-void CBullet::Fire_Bullet(LPDIRECT3DDEVICE9 _pGraphicDev, const _vec3& _vStartPos, const _vec3& _vDir, const _float& _fAttackDamage)
-{
-	
-}
-
-void CBullet::Fire_Missile(LPDIRECT3DDEVICE9 _pGraphicDev, const _vec3& _vStartPos, const _vec3& _vEndPos, const _float& _fAttackDamage, const _vec3& vCurvePos)
-{
 }
 
 void CBullet::Free()

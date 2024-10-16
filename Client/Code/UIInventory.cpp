@@ -66,7 +66,7 @@ HRESULT CUIInventory::Add_Unit()
 	{
 		_vec3 vPos;
 
-		if (i < 5) vPos = { -WINCX / 2.f + (WINCX / 6.f) * (i + 1), 70.f, 0.f };
+		if (i < 5) vPos = { -WINCX / 2.f + (WINCX / 6.f) * (i + 1), 100.f, 0.f };
 		else vPos = { -WINCX / 2.f + (WINCX / 6.f) * (i - 4), -200.f, 0.f };
 
 		m_vecUpgradeCard.push_back(CUIUpgradeCard::Create(m_pGraphicDev, vPos));

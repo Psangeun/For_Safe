@@ -7,6 +7,7 @@ CFloor::CFloor(LPDIRECT3DDEVICE9 _pGraphicDev)
     , m_pBufferCom(nullptr)
     , m_pColliderCom(nullptr)
     , m_fDamage(0.f)
+    , m_bSlidSpeed(false)
 {
     m_iNumber = 0;
     m_iNumber_Type = 0;
@@ -26,6 +27,15 @@ CFloor* CFloor::Create_InfoNumberTrigger(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 _
         Safe_Release(pFloor);
         MSG_BOX("pTerrain Create Failed");
         return nullptr;
+    }
+
+    if (_iNumber == 27 || _iNumber == 28)
+    {
+        pFloor->m_fDamage = 10.f;
+    }
+    if (_iNumber == 13)
+    {
+        pFloor->m_bSlidSpeed = true;
     }
 
     pFloor->Setup_Position(_vecPos);
@@ -48,6 +58,14 @@ CFloor* CFloor::Create_InfoNumberTrigger2(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 
         MSG_BOX("pTerrain Create Failed");
         return nullptr;
     }
+    if (_iNumber == 27 || _iNumber == 28)
+    {
+        pFloor->m_fDamage = 10.f;
+    }
+    if (_iNumber == 13)
+    {
+        pFloor->m_bSlidSpeed = true;
+    }
 
     pFloor->Setup_Position(_vecPos);
     pFloor->Setup_Rotation(_vecRot);
@@ -55,6 +73,42 @@ CFloor* CFloor::Create_InfoNumberTrigger2(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 
     pFloor->m_vecRot = _vecRot;
     pFloor->m_iNumber = _iNumber;
     pFloor->Set_Number(_iNumber);
+    pFloor->Set_Trigger(_iTrigger);
+
+    return pFloor;
+}
+
+CFloor* CFloor::Create_Info(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 _vecPos, _vec3 _vecRot, _vec3 _vecScale, const _int& _iNumber, const _int& _iTrigger)
+{
+    CFloor* pFloor = new CFloor(_pGraphicDev);
+
+
+    if (FAILED(pFloor->Ready_GameObject()))
+    {
+        Safe_Release(pFloor);
+        MSG_BOX("pTerrain Create Failed");
+        return nullptr;
+    }
+    if (_iNumber == 27 || _iNumber == 28)
+    {
+        pFloor->m_fDamage = 10.f;
+    }
+    if (_iNumber == 13)
+    {
+        pFloor->m_bSlidSpeed = true;
+    }
+
+    pFloor->Setup_Position(_vecPos);
+    pFloor->m_vecPos = _vecPos;
+
+    pFloor->Setup_Rotation(_vecRot);
+    pFloor->m_vecRot = _vecRot;
+    
+    pFloor->Setup_Scale(_vecScale);
+    pFloor->m_vecScale = _vecScale;
+    
+    pFloor->Set_Number(_iNumber);
+    pFloor->m_iNumber = _iNumber;
     pFloor->Set_Trigger(_iTrigger);
 
     return pFloor;
@@ -174,6 +228,11 @@ void CFloor::Setup_Position(_vec3 _vecPos)
 void CFloor::Setup_Rotation(_vec3 _vecRot)
 {
     m_pTransformCom->Set_Angle(_vecRot.x, _vecRot.y, _vecRot.z);
+}
+
+void CFloor::Setup_Scale(_vec3 _vecScale)
+{
+    m_pTransformCom->Set_Scale(_vecScale.x, _vecScale.y, _vecScale.z);
 }
 
 void CFloor::Free()

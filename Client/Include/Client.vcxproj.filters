@@ -191,12 +191,6 @@
     <Filter Include="04.UI\01.Combo">
       <UniqueIdentifier>{8c12b94b-4536-458a-a33a-03c418577b33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.UI\01.Combo\00.ComboLeft">
-      <UniqueIdentifier>{e8a6e9ec-bba0-426c-b6d4-5f4f3881160b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\01.Combo\01.ComboRight">
-      <UniqueIdentifier>{7470e5dd-6212-4f22-80dd-849d40170dc9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.GameObject\12.DrinkMachine">
       <UniqueIdentifier>{b6f8a541-b2da-4673-b89c-001544007921}</UniqueIdentifier>
     </Filter>
@@ -242,27 +236,6 @@
     <Filter Include="03.GameObject\06.Effect\12. EffectExplosion">
       <UniqueIdentifier>{88b0b71c-1d9a-4993-81d9-bff92c801eb4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.UI\10.FreeCam">
-      <UniqueIdentifier>{48b70013-ae9f-4684-95ef-0718c8e89ff7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\10.FreeCam\00.Indicator">
-      <UniqueIdentifier>{60de8278-55f1-4212-b9b4-9e064baed9a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\06.Screen">
-      <UniqueIdentifier>{87aa78f3-3597-4884-a547-37d3c8643642}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\06.Screen\00.ScreenOuter">
-      <UniqueIdentifier>{a60dd467-04c4-4396-845e-cbd6b40001ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\07.Player">
-      <UniqueIdentifier>{5e918870-b2aa-4779-b24b-c832e91d0269}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\07.Player\00.Reload">
-      <UniqueIdentifier>{dd62a65c-f491-47ad-b069-660bc5ca1f47}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\07.Player\01.Item">
-      <UniqueIdentifier>{12d8a617-8bad-4869-bc98-4634d1a98d0d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.UI\05.Boss">
       <UniqueIdentifier>{a0ddb1e0-0a50-49be-afb2-671ba7f654a1}</UniqueIdentifier>
     </Filter>
@@ -278,14 +251,149 @@
     <Filter Include="04.UI\05.Boss\01.Roboto\00.BossLifeBar">
       <UniqueIdentifier>{dba3a156-cae4-4ce8-bad1-eaba8bd92a52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.UI\05.Boss\01.Roboto\01.BossBar">
-      <UniqueIdentifier>{364c12c9-e68d-46e2-aab2-0045ba8be47b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.UI\05.Boss\01.Roboto\02.BossName">
-      <UniqueIdentifier>{58cc1bb8-9a31-4d63-9d90-d220b63c683e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.UI\05.Boss\02.SniperHP">
       <UniqueIdentifier>{187f472e-f973-40c3-a0dc-0b3e0e687365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\07.Tile\06.ItemTile">
+      <UniqueIdentifier>{f09d2a7b-0521-4e66-80eb-e4d87ae8c101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\09.Ammo\Laser">
+      <UniqueIdentifier>{af936e54-c2de-4e51-ab2c-f3722b72ca20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\13. EffectKick">
+      <UniqueIdentifier>{6078c065-dac8-425e-9c64-4ebfaaac9731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\14. EffectKatanaAttack">
+      <UniqueIdentifier>{b75a2751-8db7-48df-95de-bab4e14eb044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\09.Ammo\MiniGun">
+      <UniqueIdentifier>{10dbb74a-ef2d-4c5e-a12b-f4a5d0e3963a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\15. EffectBloodJet">
+      <UniqueIdentifier>{f54c68e6-c57f-4994-a780-7dea1d03acf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\06.Player">
+      <UniqueIdentifier>{5e918870-b2aa-4779-b24b-c832e91d0269}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\06.Player\01.Item">
+      <UniqueIdentifier>{12d8a617-8bad-4869-bc98-4634d1a98d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\07.FreeCam">
+      <UniqueIdentifier>{48b70013-ae9f-4684-95ef-0718c8e89ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\07.FreeCam\00.Indicator">
+      <UniqueIdentifier>{60de8278-55f1-4212-b9b4-9e064baed9a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Stage\00.GameStage1">
+      <UniqueIdentifier>{d54ee025-22f9-4278-9736-668d8eacc1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Stage\01.GameStage2">
+      <UniqueIdentifier>{d7aebe3b-d207-4060-851f-96724f7a1eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Stage\02.GameStage3">
+      <UniqueIdentifier>{98244517-772b-4a25-851c-76a7c0b693bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Stage\03.BuildingStage">
+      <UniqueIdentifier>{1c41e8c9-c039-4f9b-8c80-c0e49118c5ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Stage\04.BossStage">
+      <UniqueIdentifier>{5ec89549-a06e-4594-8653-988032d4967e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\16 EffectSniperMuzzleFlash">
+      <UniqueIdentifier>{2c512db6-e759-4a13-a2f2-4129c096b5be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\08.Phone">
+      <UniqueIdentifier>{d2cbf44f-0c9f-486f-9462-9a8907c6bdff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\08.Phone\00.PhoneBase">
+      <UniqueIdentifier>{5a0d843a-daeb-42b2-970c-6594579a3d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\06.Player\00.Reload">
+      <UniqueIdentifier>{58feec5f-cef1-4a2e-99ae-4fe76c413e15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\09.Action">
+      <UniqueIdentifier>{2369ef94-06c9-4f3d-ba88-96c4752ab9dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\09.Action\00.ActionBase">
+      <UniqueIdentifier>{b6cd19ed-604a-4eeb-b9c3-4e5df01ac04a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\17. ShockWave">
+      <UniqueIdentifier>{eecc1573-0c41-4e5d-95f2-c4d28239262a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\18. BigExplosion">
+      <UniqueIdentifier>{01dc75de-ee17-4f4d-b46e-fbdf3c5b799b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\19. LaserTarget">
+      <UniqueIdentifier>{972f6c2f-4d07-448e-98c4-8c401f74da87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\99.Screen">
+      <UniqueIdentifier>{87aa78f3-3597-4884-a547-37d3c8643642}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\10.Down">
+      <UniqueIdentifier>{11109680-3fb6-423b-bf03-a33704446dd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\10.Down\00.DownBase">
+      <UniqueIdentifier>{606b2d5e-6534-4125-af8b-4bf2c2af8567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\06.Player\02.Emergency">
+      <UniqueIdentifier>{0da4f3d7-84d0-46a4-8583-208d0dd33752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\09.Ammo\HumanoindHead">
+      <UniqueIdentifier>{d8ebdf09-096b-4f3c-9b57-2ff754ab4406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\08.Phone\01.PhoneBoss">
+      <UniqueIdentifier>{29da3f88-c735-434f-a4de-1d4f97fb9f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\09.Ammo\Boss_Humanoid_Laser">
+      <UniqueIdentifier>{b487a5af-8142-44fc-93f8-3b011ac1235c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\11.Filter\01. Dying">
+      <UniqueIdentifier>{55c6c87a-20c8-4311-b127-5b37cd1b3183}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\01.Combo\00.ComboBase">
+      <UniqueIdentifier>{30194ee5-d97a-4c6a-b8c9-d18bc5b119b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\04.CutScene">
+      <UniqueIdentifier>{6f47414a-bb43-469f-96e0-e0365cc58337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\11.Floor">
+      <UniqueIdentifier>{7bd59755-4517-4663-8797-7d50783f49e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\12.Victory">
+      <UniqueIdentifier>{eca88fe6-7781-471a-8098-b6f2b7658f7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\11.Floor\00.FloorBase">
+      <UniqueIdentifier>{72858c99-40a1-4904-9fdc-c25e65057531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\12.Victory\00.VictoryBase">
+      <UniqueIdentifier>{fa137eb8-22dd-4dea-8a40-0810364ee7a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\99.Screen\00.ScreenBase">
+      <UniqueIdentifier>{0254548e-c735-4742-90a8-7b3fccd582ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\08.Shield\Boss_Shield">
+      <UniqueIdentifier>{02c212a9-024e-4fd4-bf5a-ef251a043012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.GameObject\06.Effect\20. BossRobotDie">
+      <UniqueIdentifier>{011bdc6d-5dcc-44af-9e6e-c5d193cff578}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\11.Floor\01.FloorBoss">
+      <UniqueIdentifier>{e9ff6d5a-ae80-4402-a3f0-d28d6a2b34e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\13.Skill">
+      <UniqueIdentifier>{bf370379-af11-4ef9-99e2-89f342223f59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\13.Skill\00.SkillBase">
+      <UniqueIdentifier>{05ca90a1-0cc5-45c4-9e38-d0cd1e7095ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\14.Ending">
+      <UniqueIdentifier>{ba21617c-53f1-49d6-b11b-94cfc8eb97a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.UI\14.Ending\00.EndingBase">
+      <UniqueIdentifier>{126e2c83-0d93-4171-a034-a9891894ac60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\05.EndingScene">
+      <UniqueIdentifier>{25abbeda-6e17-4c5f-8988-d710e459d509}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,9 +429,6 @@
     </ClInclude>
     <ClInclude Include="..\Header\Monster.h">
       <Filter>03.GameObject\02.Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Stage.h">
-      <Filter>02.Scene\01.Stage</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Loading.h">
       <Filter>02.Scene\02.Loading</Filter>
@@ -481,12 +586,6 @@
     <ClInclude Include="..\Header\UICombo.h">
       <Filter>04.UI\01.Combo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\UIComboLeft.h">
-      <Filter>04.UI\01.Combo\00.ComboLeft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\UIComboRight.h">
-      <Filter>04.UI\01.Combo\01.ComboRight</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\UIInventory.h">
       <Filter>04.UI\02.Inventory</Filter>
     </ClInclude>
@@ -500,13 +599,10 @@
       <Filter>04.UI\04.Shop\00.ShopBase</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\UIIndicator.h">
-      <Filter>04.UI\10.FreeCam\00.Indicator</Filter>
+      <Filter>04.UI\07.FreeCam\00.Indicator</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\UIFreeCam.h">
-      <Filter>04.UI\10.FreeCam</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Drink.h">
-      <Filter>03.GameObject\10.Item\02.Drink</Filter>
+      <Filter>04.UI\07.FreeCam</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\DrinkMachine.h">
       <Filter>03.GameObject\12.DrinkMachine</Filter>
@@ -550,17 +646,149 @@
     <ClInclude Include="..\Header\UIBossLifeBar.h">
       <Filter>04.UI\05.Boss\01.Roboto\00.BossLifeBar</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\UIBossBar.h">
-      <Filter>04.UI\05.Boss\01.Roboto\01.BossBar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\UIBossName.h">
-      <Filter>04.UI\05.Boss\01.Roboto\02.BossName</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\UIRoboto.h">
       <Filter>04.UI\05.Boss\01.Roboto</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\UISniperHP.h">
       <Filter>04.UI\05.Boss\02.SniperHP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ItemTile.h">
+      <Filter>03.GameObject\07.Tile\06.ItemTile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Drink.h">
+      <Filter>03.GameObject\10.Item\02.Drink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Laser.h">
+      <Filter>03.GameObject\09.Ammo\Laser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectKick.h">
+      <Filter>03.GameObject\06.Effect\13. EffectKick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectKatanaAttack.h">
+      <Filter>03.GameObject\06.Effect\14. EffectKatanaAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\MiniGun.h">
+      <Filter>03.GameObject\09.Ammo\MiniGun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectBloodJet.h">
+      <Filter>03.GameObject\06.Effect\15. EffectBloodJet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIScreen.h">
+      <Filter>04.UI\99.Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIScreenBase.h">
+      <Filter>04.UI\99.Screen\00.ScreenBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Stage.h">
+      <Filter>02.Scene\01.Stage\00.GameStage1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\BuildStage.h">
+      <Filter>02.Scene\01.Stage\03.BuildingStage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIReload.h">
+      <Filter>04.UI\06.Player\00.Reload</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectSniperMuzzleFlash.h">
+      <Filter>03.GameObject\06.Effect\16 EffectSniperMuzzleFlash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\BossStage.h">
+      <Filter>02.Scene\01.Stage\04.BossStage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIPhone.h">
+      <Filter>04.UI\08.Phone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIPhoneBase.h">
+      <Filter>04.UI\08.Phone\00.PhoneBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\GameStage2.h">
+      <Filter>02.Scene\01.Stage\01.GameStage2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\GameStage3.h">
+      <Filter>02.Scene\01.Stage\02.GameStage3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIItem.h">
+      <Filter>04.UI\06.Player\01.Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIPlayer.h">
+      <Filter>04.UI\06.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIAction.h">
+      <Filter>04.UI\09.Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIActionBase.h">
+      <Filter>04.UI\09.Action\00.ActionBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectShockWave.h">
+      <Filter>03.GameObject\06.Effect\17. ShockWave</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectLaserTarget.h">
+      <Filter>03.GameObject\06.Effect\19. LaserTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectBigExplosion.h">
+      <Filter>03.GameObject\06.Effect\18. BigExplosion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIDown.h">
+      <Filter>04.UI\10.Down</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIDownBase.h">
+      <Filter>04.UI\10.Down\00.DownBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIEmergency.h">
+      <Filter>04.UI\06.Player\02.Emergency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\HumanoidHead.h">
+      <Filter>03.GameObject\09.Ammo\HumanoindHead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIPhoneBoss.h">
+      <Filter>04.UI\08.Phone\01.PhoneBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Boss_Humanoid_Laser.h">
+      <Filter>03.GameObject\09.Ammo\Boss_Humanoid_Laser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\FilterDying.h">
+      <Filter>03.GameObject\11.Filter\01. Dying</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CutScene.h">
+      <Filter>02.Scene\04.CutScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIComboBase.h">
+      <Filter>04.UI\01.Combo\00.ComboBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIFloorBase.h">
+      <Filter>04.UI\11.Floor\00.FloorBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIFloor.h">
+      <Filter>04.UI\11.Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIVictory.h">
+      <Filter>04.UI\12.Victory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIVictoryBase.h">
+      <Filter>04.UI\12.Victory\00.VictoryBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Boss_Shield.h">
+      <Filter>03.GameObject\08.Shield\Boss_Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EffectBossRobotDie.h">
+      <Filter>03.GameObject\06.Effect\20. BossRobotDie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIFloorBoss.h">
+      <Filter>04.UI\11.Floor\01.FloorBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UISkillBase.h">
+      <Filter>04.UI\13.Skill\00.SkillBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UISkill.h">
+      <Filter>04.UI\13.Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIEnding.h">
+      <Filter>04.UI\14.Ending</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\UIEndingBase.h">
+      <Filter>04.UI\14.Ending\00.EndingBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\EndingScene.h">
+      <Filter>02.Scene\05.EndingScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -584,9 +812,6 @@
     </ClCompile>
     <ClCompile Include="..\Code\Monster.cpp">
       <Filter>03.GameObject\02.Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Code\Stage.cpp">
-      <Filter>02.Scene\01.Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Terrain.cpp">
       <Filter>03.GameObject\03.Terrain</Filter>
@@ -738,12 +963,6 @@
     <ClCompile Include="..\Code\UICombo.cpp">
       <Filter>04.UI\01.Combo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Code\UIComboLeft.cpp">
-      <Filter>04.UI\01.Combo\00.ComboLeft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Code\UIComboRight.cpp">
-      <Filter>04.UI\01.Combo\01.ComboRight</Filter>
-    </ClCompile>
     <ClCompile Include="..\Code\UIInventory.cpp">
       <Filter>04.UI\02.Inventory</Filter>
     </ClCompile>
@@ -757,13 +976,10 @@
       <Filter>04.UI\04.Shop\00.ShopBase</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\UIIndicator.cpp">
-      <Filter>04.UI\10.FreeCam\00.Indicator</Filter>
+      <Filter>04.UI\07.FreeCam\00.Indicator</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\UIFreeCam.cpp">
-      <Filter>04.UI\10.FreeCam</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Code\Drink.cpp">
-      <Filter>03.GameObject\10.Item\02.Drink</Filter>
+      <Filter>04.UI\07.FreeCam</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\DrinkMachine.cpp">
       <Filter>03.GameObject\12.DrinkMachine</Filter>
@@ -807,17 +1023,149 @@
     <ClCompile Include="..\Code\UIBossLifeBar.cpp">
       <Filter>04.UI\05.Boss\01.Roboto\00.BossLifeBar</Filter>
     </ClCompile>
-    <ClCompile Include="..\Code\UIBossBar.cpp">
-      <Filter>04.UI\05.Boss\01.Roboto\01.BossBar</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Code\UIBossName.cpp">
-      <Filter>04.UI\05.Boss\01.Roboto\02.BossName</Filter>
-    </ClCompile>
     <ClCompile Include="..\Code\UIRoboto.cpp">
       <Filter>04.UI\05.Boss\01.Roboto</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\UISniperHP.cpp">
       <Filter>04.UI\05.Boss\02.SniperHP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ItemTile.cpp">
+      <Filter>03.GameObject\07.Tile\06.ItemTile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Drink.cpp">
+      <Filter>03.GameObject\10.Item\02.Drink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Laser.cpp">
+      <Filter>03.GameObject\09.Ammo\Laser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectKick.cpp">
+      <Filter>03.GameObject\06.Effect\13. EffectKick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectKatanaAttack.cpp">
+      <Filter>03.GameObject\06.Effect\14. EffectKatanaAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\MiniGun.cpp">
+      <Filter>03.GameObject\09.Ammo\MiniGun</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectBloodJet.cpp">
+      <Filter>03.GameObject\06.Effect\15. EffectBloodJet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIScreen.cpp">
+      <Filter>04.UI\99.Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIScreenBase.cpp">
+      <Filter>04.UI\99.Screen\00.ScreenBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Stage.cpp">
+      <Filter>02.Scene\01.Stage\00.GameStage1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\BuildStage.cpp">
+      <Filter>02.Scene\01.Stage\03.BuildingStage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIReload.cpp">
+      <Filter>04.UI\06.Player\00.Reload</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectSniperMuzzleFlash.cpp">
+      <Filter>03.GameObject\06.Effect\16 EffectSniperMuzzleFlash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\BossStage.cpp">
+      <Filter>02.Scene\01.Stage\04.BossStage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIPhone.cpp">
+      <Filter>04.UI\08.Phone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIPhoneBase.cpp">
+      <Filter>04.UI\08.Phone\00.PhoneBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\GameStage2.cpp">
+      <Filter>02.Scene\01.Stage\01.GameStage2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\GameStage3.cpp">
+      <Filter>02.Scene\01.Stage\02.GameStage3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIItem.cpp">
+      <Filter>04.UI\06.Player\01.Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIPlayer.cpp">
+      <Filter>04.UI\06.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIAction.cpp">
+      <Filter>04.UI\09.Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIActionBase.cpp">
+      <Filter>04.UI\09.Action\00.ActionBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectShockWave.cpp">
+      <Filter>03.GameObject\06.Effect\17. ShockWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectBigExplosion.cpp">
+      <Filter>03.GameObject\06.Effect\18. BigExplosion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectLaserTarget.cpp">
+      <Filter>03.GameObject\06.Effect\19. LaserTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIDown.cpp">
+      <Filter>04.UI\10.Down</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIDownBase.cpp">
+      <Filter>04.UI\10.Down\00.DownBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIEmergency.cpp">
+      <Filter>04.UI\06.Player\02.Emergency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\HumanoidHead.cpp">
+      <Filter>03.GameObject\09.Ammo\HumanoindHead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIPhoneBoss.cpp">
+      <Filter>04.UI\08.Phone\01.PhoneBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Boss_Humanoid_Laser.cpp">
+      <Filter>03.GameObject\09.Ammo\Boss_Humanoid_Laser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\FilterDying.cpp">
+      <Filter>03.GameObject\11.Filter\01. Dying</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\CutScene.cpp">
+      <Filter>02.Scene\04.CutScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIComboBase.cpp">
+      <Filter>04.UI\01.Combo\00.ComboBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIFloorBase.cpp">
+      <Filter>04.UI\11.Floor\00.FloorBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIFloor.cpp">
+      <Filter>04.UI\11.Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIVictory.cpp">
+      <Filter>04.UI\12.Victory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIVictoryBase.cpp">
+      <Filter>04.UI\12.Victory\00.VictoryBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Boss_Shield.cpp">
+      <Filter>03.GameObject\08.Shield\Boss_Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectBossRobotDie.cpp">
+      <Filter>03.GameObject\06.Effect\20. BossRobotDie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIFloorBoss.cpp">
+      <Filter>04.UI\11.Floor\01.FloorBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UISkillBase.cpp">
+      <Filter>04.UI\13.Skill\00.SkillBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UISkill.cpp">
+      <Filter>04.UI\13.Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIEnding.cpp">
+      <Filter>04.UI\14.Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UIEndingBase.cpp">
+      <Filter>04.UI\14.Ending\00.EndingBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EndingScene.cpp">
+      <Filter>02.Scene\05.EndingScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -64,10 +64,13 @@ HRESULT CWhiteSuit::Ready_GameObject()
 	m_pColliderCom->SetShow(true);
 	m_pColliderCom->SetActive(true);
 
+	_int iTemp = rand() % 20;
+	m_fAttackTimer = (iTemp + 1) / 2.f;
+
 	Set_Animation();
-	m_pHitBufferCom->SetvOffSet({ 0.f,0.f,0.f });
-	m_pHeadHit->SetvOffSet({ 0.5f,0.5f,0.f });
-	m_pCriticalHit->SetvOffSet({ -0.5f,0.5f,0.f });
+	m_pHitBufferCom->Set_Hit_Parts(CRcCol::HIT_BODY);
+	m_pHeadHit->Set_Hit_Parts(CRcCol::HIT_HEAD);
+	m_pCriticalHit->Set_Hit_Parts(CRcCol::HIT_CRITICAL);
 	return S_OK;
 }
 
@@ -244,7 +247,7 @@ void CWhiteSuit::Attack(const _float& _fTimeDelta)
 		m_bIsExecution = false;
 		Changing_State(CHumanoid::HUMANOID_IDLE);
 		m_pTransformCom->Set_Scale({ 1.f, 1.f, 1.f });
-		AddForce(30.f, m_vPlayerLook, 15.f);
+		AddForce(16.5f, m_vPlayerLook, 15.f);
 		CComponent* pComponent = Engine::Get_Component(COMPONENTID::ID_DYNAMIC, L"Layer_Effect", L"EffectHeal", L"Com_Effect");
 		static_cast<CEffect*>(pComponent)->Set_Visibility(TRUE);
 
@@ -283,6 +286,7 @@ void CWhiteSuit::Attack(const _float& _fTimeDelta)
 				Changing_State(CHumanoid::HUMANOID_ATTACK);
 				D3DXVec3Normalize(&vDir, &vDir);
 				Engine::Fire_Bullet(m_pGraphicDev, vPos, vDir, 5, CBulletManager::BULLET_PISTOL);
+				Engine::Play_Sound(L"Pistol.wav", CHANNELID::SOUND_ENEMY_GUN, 0.8f);
 				m_bIsFire = true;
 			}
 		}

@@ -3,6 +3,9 @@
 #include "Export_Utility.h"
 #include "Export_System.h" // Jonghan Change
 
+#include "..\Header\UICombo.h"
+#include "..\Header\Player.h"
+
 CMonster::CMonster(LPDIRECT3DDEVICE9 _pGraphicDev)
 	: Engine::CCharacter(_pGraphicDev)
 	, m_pBufferCom(nullptr)
@@ -19,6 +22,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 _pGraphicDev)
 	, m_vStartPos({ 0.f,0.f,0.f })
 	, m_pPlayerTransformCom(nullptr)
 	, m_iTriggerCount(0)
+	, IsBoss(false)
 {
 }
 
@@ -30,12 +34,17 @@ _int CMonster::Update_GameObject(const _float& _fTimeDelta)
 {
 	//Jonghan Monster Change Start
 
+	if (m_bIsExecution)
+		Add_RenderGroup(RENDERID::RENDER_ORTHOGONAL, this);
+	else if (m_bIsRender)
+		Add_RenderGroup(RENDERID::RENDER_ALPHA, this);
+
 	if (!m_bIsRender) //Trigger
 		return 0;
 
 	Picking_Terrain();
 
-	if (!m_bIsDead)
+	if (!m_bIsDead )
 		Attack(_fTimeDelta);
 
 	KnockBack(_fTimeDelta);
@@ -64,12 +73,9 @@ _int CMonster::Update_GameObject(const _float& _fTimeDelta)
 
 
 
-	if (m_bIsExecution)
-		Add_RenderGroup(RENDERID::RENDER_ORTHOGONAL, this);
-	else
-		Add_RenderGroup(RENDERID::RENDER_ALPHA, this);
 
-	Engine::Add_Collider(m_pColliderCom);
+	if (!m_bIsDead)
+		Engine::Add_Collider(m_pColliderCom);
 
 	//Jonghan Monster Change End
 
@@ -107,8 +113,8 @@ void CMonster::Damaged(const DAMAGED_STATE& _eDamagedState, const _float& _fAtta
 {
 	if (Engine::DAMAGED_STATE::DAMAGED_BODYSHOT == _eDamagedState || Engine::DAMAGED_STATE::DAMAGED_PUSHSHOT == _eDamagedState)
 	{
-		//Damaged_By_Player(_eDamagedState, _fAttackDamage);
-		Damaged_By_Player(_eDamagedState, 0.f);
+		Damaged_By_Player(_eDamagedState, _fAttackDamage);
+		//Damaged_By_Player(_eDamagedState, 0.f);
 	}
 	else
 	{
@@ -120,7 +126,7 @@ void CMonster::AddForce(const _float& _fPower, _vec3 _vLook, const _float& _fDam
 {
 	D3DXVec3Normalize(&_vLook, &_vLook);
 	_vLook.y = 0.f;
-	_vLook *= _fPower;
+	_vLook *= _fPower * 0.8f;
 	vKnockBackForce = _vLook;
 	Damaged(Engine::DAMAGED_STATE::DAMAGED_PUSHSHOT, _fDamage);
 }
@@ -143,56 +149,71 @@ void CMonster::KnockBack(const _float& _fTimeDelta)
 
 void CMonster::Picking_Terrain()
 {
-	_vec3 vPos;
-	m_pTransformCom->Get_Info(INFO::INFO_POS, &vPos);
+	if (!IsBoss) {
+		_vec3 vPos;
+		m_pTransformCom->Get_Info(INFO::INFO_POS, &vPos);
 
-	_float fTilePos = Engine::FloorRayCast(vPos);
+		_float fTilePos = Engine::FloorRayCast(vPos);
 
-	if (fTilePos > 0.f)
-		m_pTransformCom->Set_Pos(vPos.x, vPos.y - fTilePos + 1.f, vPos.z);
+		if (fTilePos > 0.f)
+			m_pTransformCom->Set_Pos(vPos.x, vPos.y - fTilePos + 1.f, vPos.z);
+	}
 }
 
 void CMonster::Collide_Wall(CCollider& _pOther)
 {
-	// 벽 충돌 밀어내기
-	CGameObject* pGameObject = _pOther.GetOwner();
+	if (!IsBoss) {
+		// 벽 충돌 밀어내기
+		CGameObject* pGameObject = _pOther.GetOwner();
 
-	if (Engine::Get_CurrScene()->Get_Layer(pGameObject) == L"Layer_Wall")
-	{
-		CCollider::AABB* vBoxThis = m_pColliderCom->GetAABB();
-		CCollider::AABB* vBoxOther = _pOther.GetAABB();
-
-		_vec3 vCenterThis = (vBoxThis->vMin + vBoxThis->vMax) / 2.f;
-		_vec3 vCenterOther = (vBoxOther->vMin + vBoxOther->vMax) / 2.f;
-
-		_vec3 vOverlap = vCenterThis - vCenterOther;
-		_float fOverlapX = (vBoxThis->vMax.x - vBoxThis->vMin.x) / 2.0f + (vBoxOther->vMax.x - vBoxOther->vMin.x) / 2.0f - fabs(vOverlap.x);
-		_float fOverlapZ = (vBoxThis->vMax.z - vBoxThis->vMin.z) / 2.0f + (vBoxOther->vMax.z - vBoxOther->vMin.z) / 2.0f - fabs(vOverlap.z);
-
-		if (!(fOverlapX < 0 || fOverlapZ < 0))
+		if (Engine::Get_CurrScene()->Get_Layer(pGameObject) == L"Layer_Wall")
 		{
-			_vec3 vPos;
-			m_pTransformCom->Get_Info(INFO::INFO_POS, &vPos);
+			CCollider::AABB* vBoxThis = m_pColliderCom->GetAABB();
+			CCollider::AABB* vBoxOther = _pOther.GetAABB();
 
-			if (fOverlapX < fOverlapZ)
-			{
-				if (vOverlap.x > 0)
-					m_pTransformCom->Set_Pos(vPos.x + fOverlapX, vPos.y, vPos.z);
-				else
-					m_pTransformCom->Set_Pos(vPos.x - fOverlapX, vPos.y, vPos.z);
-			}
-			else
-			{
-				if (vOverlap.z > 0)
-					m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z + fOverlapZ);
-				else
-					m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z - fOverlapZ);
-			}
+			_vec3 vCenterThis = (vBoxThis->vMin + vBoxThis->vMax) / 2.f;
+			_vec3 vCenterOther = (vBoxOther->vMin + vBoxOther->vMax) / 2.f;
 
-			m_pTransformCom->Update_Component(0.f);
-			m_pColliderCom->LateUpdate_Component();
+			_vec3 vOverlap = vCenterThis - vCenterOther;
+			_float fOverlapX = (vBoxThis->vMax.x - vBoxThis->vMin.x) / 2.0f + (vBoxOther->vMax.x - vBoxOther->vMin.x) / 2.0f - fabs(vOverlap.x);
+			_float fOverlapZ = (vBoxThis->vMax.z - vBoxThis->vMin.z) / 2.0f + (vBoxOther->vMax.z - vBoxOther->vMin.z) / 2.0f - fabs(vOverlap.z);
+
+			if (!(fOverlapX < 0 || fOverlapZ < 0))
+			{
+				_vec3 vPos;
+				m_pTransformCom->Get_Info(INFO::INFO_POS, &vPos);
+
+				if (fOverlapX < fOverlapZ)
+				{
+					if (vOverlap.x > 0)
+						m_pTransformCom->Set_Pos(vPos.x + fOverlapX, vPos.y, vPos.z);
+					else
+						m_pTransformCom->Set_Pos(vPos.x - fOverlapX, vPos.y, vPos.z);
+				}
+				else
+				{
+					if (vOverlap.z > 0)
+						m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z + fOverlapZ);
+					else
+						m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z - fOverlapZ);
+				}
+
+				m_pTransformCom->Update_Component(0.f);
+				m_pColliderCom->LateUpdate_Component();
+			}
 		}
 	}
+}
+
+void CMonster::Dead_Combo()
+{
+	if (Engine::Get_ListUI(UITYPE::UI_COMBO)->empty())
+		Engine::Activate_UI(UITYPE::UI_COMBO);
+	else
+		static_cast<CUICombo*>(Engine::Get_ListUI(UITYPE::UI_COMBO)->front())->Combo_Up();
+
+	dynamic_cast<CPlayer*>(Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player"))->
+		Set_PlayerHP_Plus(static_cast<CUICombo*>(Engine::Get_ListUI(UITYPE::UI_COMBO)->front())->Get_Combo());
 }
 
 void CMonster::OnCollision(CCollider& _pOther)

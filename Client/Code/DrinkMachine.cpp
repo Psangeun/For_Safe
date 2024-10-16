@@ -13,8 +13,26 @@ CDrinkMachine::CDrinkMachine(LPDIRECT3DDEVICE9 _pGraphicDev)
 	, m_bIsDead(false)
 	, m_eCurState(DRINKMACHINESTATE::MACHINE_IDLE)
 	, m_ePreState(DRINKMACHINESTATE::MACHINE_IDLE)
-	, m_fSpawnDrinkTimer(2.5f)
-	, m_iSpawnCount(5)
+	, m_fSpawnDrinkTimer(0.5f)
+	, m_iSpawnCount(12)
+{
+	for (_int i = 0; i < DRINKMACHINESTATE::MACHINE_END; ++i)
+		m_pTextureCom[i] = nullptr;
+}
+
+CDrinkMachine::CDrinkMachine(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 _vecPos)
+	: CGameObject(_pGraphicDev)
+	, m_pAnimatorCom(nullptr)
+	, m_pBufferCom(nullptr)
+	, m_pColliderCom(nullptr)
+	, m_pTransformCom(nullptr)
+	, m_pCalculatorCom(nullptr)
+	, m_bIsDead(false)
+	, m_vStartPos(_vecPos)
+	, m_eCurState(DRINKMACHINESTATE::MACHINE_IDLE)
+	, m_ePreState(DRINKMACHINESTATE::MACHINE_IDLE)
+	, m_fSpawnDrinkTimer(0.5f)
+	, m_iSpawnCount(12)
 {
 	for (_int i = 0; i < DRINKMACHINESTATE::MACHINE_END; ++i)
 		m_pTextureCom[i] = nullptr;
@@ -38,11 +56,26 @@ CDrinkMachine* CDrinkMachine::Create(LPDIRECT3DDEVICE9 _pGraphicDev)
 	return pGameObject;
 }
 
+CDrinkMachine* CDrinkMachine::Create(LPDIRECT3DDEVICE9 _pGraphicDev, _vec3 _vecPos)
+{
+	CDrinkMachine* pGameObject = new CDrinkMachine(_pGraphicDev, _vecPos);
+
+	if (FAILED(pGameObject->Ready_GameObject()))
+	{
+		Safe_Release(pGameObject);
+		MSG_BOX("Boss_Robot Create Failed");
+		return nullptr;
+	}
+
+	return pGameObject;
+}
+
+
 HRESULT CDrinkMachine::Ready_GameObject()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Set_Pos(10.f, 0.f, 25.f);
+	m_pTransformCom->Set_Pos(m_vStartPos.x, m_vStartPos.y, m_vStartPos.z);
 	m_pColliderCom->SetTransform(m_pTransformCom);
 	m_pColliderCom->SetRadius(1.f);
 	m_pColliderCom->SetShow(true);
@@ -74,6 +107,7 @@ HRESULT CDrinkMachine::Ready_GameObject()
 _int CDrinkMachine::Update_GameObject(const _float& _fTimeDelta)
 {
 	//if (!m_bIsDead)
+
 	Spawn_Drink();
 	_int iExit = Engine::CGameObject::Update_GameObject(_fTimeDelta);
 
@@ -140,13 +174,13 @@ void CDrinkMachine::Render_GameObject()
 	//Jonghan Monster Change Start
 
 	//m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	//m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	m_pGraphicDev->SetTexture(0, nullptr);
 
 	
 	m_pAnimatorCom->Render_Animator();
 	m_pBufferCom->Render_Buffer();
-	m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	//m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 }
 
 void CDrinkMachine::Break_Machine()
@@ -159,7 +193,7 @@ void CDrinkMachine::OnCollisionEnter(CCollider& _pOther)
 	//CGameObject* pGameObject = Engine::Get_CurrScene()->Get_GameObject(L"Layer_Player", L"Player");
 	//dynamic_cast<CPlayer*>(pGameObject)->Get_HasItem();
 	//m_pColliderCom->SetActive(false);
-
+	//Spawn_Drink();
 }
 
 HRESULT CDrinkMachine::Add_Component()
@@ -213,7 +247,7 @@ void CDrinkMachine::Set_Animation()
 
 void CDrinkMachine::Spawn_Drink()
 {
-	if (1.5f < m_fSpawnDrinkTimer && 0 < m_iSpawnCount)
+	if (0.45f < m_fSpawnDrinkTimer && 0 < m_iSpawnCount)
 	{
 		_vec3 vPos;
 		m_pTransformCom->Get_Info(INFO::INFO_POS, &vPos);
@@ -224,7 +258,6 @@ void CDrinkMachine::Spawn_Drink()
 		m_fSpawnDrinkTimer = 0.f;
 		m_iSpawnCount--;
 	}
-	
 }
 
 void CDrinkMachine::State_Check()
@@ -241,7 +274,8 @@ void CDrinkMachine::State_Check()
 			break;
 		case CDrinkMachine::MACHINE_BROKEN:
 			m_pAnimatorCom->PlayAnimation(L"Broken", true);
-
+			Engine::Play_Sound(L"DrinkMachine_Break.wav", CHANNELID::SOUND_PLAYER_LEG, 0.6f);
+			Engine::Play_Sound(L"Soda_Spawn.wav", CHANNELID::SOUND_EFFECT, 0.8f);
 			break;
 		}
 

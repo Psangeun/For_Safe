@@ -33,6 +33,8 @@ private:
 
 private:
 	void Animate_UV();
+public:
+	static void OnOperate(void* _pParam);
 
 private:
 	Engine::CRcTex* m_pBufferCom;

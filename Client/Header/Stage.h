@@ -13,9 +13,12 @@
 #include "DogDrone.h"	 
 #include "Ammo.h"
 #include "Missile.h"
+#include "Laser.h"
+#include "MiniGun.h"
 #include "Boss_Humanoid.h"
 #include "Boss_Robot.h"
 #include "Shield.h"
+#include "Boss_Shield.h"
 #include "Knife.h"
 #include "Axe.h"
 #include "DrinkMachine.h"
@@ -51,14 +54,13 @@ private:
 	HRESULT Ready_Layer_MonsterBullet(const _tchar* _pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* _pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* _pLayerTag);
-	HRESULT Ready_Layer_Item(const _tchar* _pLayerTag);
 
 private:
 	void Set_Collision();
 	// 레이어 찾을려는 용도 - 유빈
 	CLayer* Find_Layer(const _tchar* _pLayerTag);
 	// 맵 불러오기 - 유빈
-	void MapLoad2(CLayer* _pLayer, CLayer* _pLayer2);
+	void MapLoad2(CLayer* _pLayer, CLayer* _pLayer2, CLayer* _pLayer3);
 
 private:
 	virtual void Free();

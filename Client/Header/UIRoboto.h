@@ -9,8 +9,6 @@ class CUIUnit;
 END
 
 class CUIBossLifeBar;
-class CUIBossBar;
-class CUIBossName;
 
 class CUIRoboto
 	: public Engine::CUI
@@ -32,16 +30,11 @@ private:
 	HRESULT Add_Unit();
 
 public:
-	virtual void Reset();
+	void Boss_Hit();
 
 private:
 	virtual void Free();
 
 private:
 	CUIBossLifeBar* m_pUIBossLifeBar;
-	vector<CUIBossBar*> m_vecUIBossBar;
-	CUIBossName* m_pUIBossName;
-
-	_float m_fMaxHP;
-	_float m_fCurrHP;
 };

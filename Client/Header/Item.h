@@ -27,6 +27,8 @@ public:
     virtual void LateUpdate_GameObject();
     virtual void Render_GameObject();
 
+public:
+    _bool Get_IsRender() { return m_bIsRender; }
 
 public:
     void OnCollisionEnter(CCollider& _pOther) {}
@@ -41,6 +43,8 @@ protected:
     Engine::CCollider* m_pColliderCom;
 
     Engine::ITEM_TYPE m_eItemType;
+
+    _vec3 m_vStartPos;//맵툴에서 가져올 아이템 포지션 값
 
 protected:
     virtual void Free();
