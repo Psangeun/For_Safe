@@ -10,6 +10,7 @@ CMainApp::CMainApp()
 
 CMainApp::~CMainApp()
 {
+	// ¼Ò¸ê±ÝÁö ¤»¤»
 }
 
 CMainApp* CMainApp::Create()
